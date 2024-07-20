@@ -4,6 +4,7 @@
 #include "PluginProcessor.h"
 #include "Parameters.h"
 #include "RotaryKnob.h"
+#include "LookAndFeel.h"
 
 class DelayAudioProcessorEditor  : public juce::AudioProcessorEditor
 {
@@ -17,7 +18,7 @@ public:
 private:
     DelayAudioProcessor& audioProcessor;
 
-    RotaryKnob gainKnob{ "Gain", audioProcessor.apvts, gainParamId };
+    RotaryKnob gainKnob{ "Gain", audioProcessor.apvts, gainParamId, true };
     RotaryKnob mixKnob{ "Mix", audioProcessor.apvts, mixParamId };
     RotaryKnob delayTimeKnob{ "Time", audioProcessor.apvts, delayTimeParamId };
 
