@@ -82,3 +82,14 @@ juce::Font Fonts::getFont(float height)
         .withMetricsKind(juce::TypefaceMetricsKind::legacy)
         .withHeight(height);
 }
+
+MainLookAndFeel::MainLookAndFeel()
+{
+    setColour(juce::GroupComponent::textColourId, Colors::Group::label);
+    setColour(juce::GroupComponent::outlineColourId, Colors::Group::outline);
+}
+
+juce::Font MainLookAndFeel::getLabelFont(juce::Label&)
+{
+    return Fonts::getFont();
+}

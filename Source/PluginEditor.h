@@ -26,5 +26,7 @@ private:
     juce::GroupComponent feedbackGroup;
     juce::GroupComponent outputGroup;
 
+    MainLookAndFeel mainLF;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DelayAudioProcessorEditor)
 };

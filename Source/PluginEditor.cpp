@@ -20,11 +20,14 @@ DelayAudioProcessorEditor::DelayAudioProcessorEditor (DelayAudioProcessor& p)
     outputGroup.addAndMakeVisible(mixKnob);
     addAndMakeVisible(outputGroup);
 
+    setLookAndFeel(&mainLF);
+
     setSize (500, 330);
 }
 
 DelayAudioProcessorEditor::~DelayAudioProcessorEditor()
 {
+    setLookAndFeel(nullptr);
 }
 
 //==============================================================================
