@@ -68,3 +68,17 @@ void RotaryKnobLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, in
         g.strokePath(valueArc, strokeType);
     }
 }
+
+juce::Font RotaryKnobLookAndFeel::getLabelFont([[maybe_unused]] juce::Label&)
+{
+    return Fonts::getFont();
+}
+
+const juce::Typeface::Ptr Fonts::typeface = juce::Typeface::createSystemTypefaceFor(BinaryData::LatoMedium_ttf, BinaryData::LatoMedium_ttfSize);
+
+juce::Font Fonts::getFont(float height)
+{
+    return juce::FontOptions(typeface)
+        .withMetricsKind(juce::TypefaceMetricsKind::legacy)
+        .withHeight(height);
+}
