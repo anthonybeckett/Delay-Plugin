@@ -52,8 +52,11 @@ public:
 	}
 
 	void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos, float rotaryStartAngle, float rotaryEndAngle, juce::Slider& slider) override;
+	void drawTextEditorOutline(juce::Graphics&, int, int, juce::TextEditor&) override {}
+	void fillTextEditorBackground(juce::Graphics&, int width, int height, juce::TextEditor&) override;
 
 	juce::Font getLabelFont(juce::Label&) override;
+	juce::Label* createSliderTextBox(juce::Slider&) override;
 
 private:
 	juce::DropShadow dropShadow{ Colors::Knob::dropShadow, 6, { 0, 3 } };
