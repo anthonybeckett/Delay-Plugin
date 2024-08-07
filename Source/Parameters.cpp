@@ -162,5 +162,5 @@ void Parameters::smoothen() noexcept
 
     feedback = feedbackSmoother.getNextValue();
 
-    panningEqualPower()
+    panningEqualPower(stereoSmoother.getNextValue(), panL, panR);
 }
