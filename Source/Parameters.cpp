@@ -1,4 +1,5 @@
 #include "Parameters.h"
+#include "DSP.h"
 
 template<typename T>
 static void castParameter(juce::AudioProcessorValueTreeState& apvts, const juce::ParameterID& id, T& destination)
@@ -50,6 +51,7 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
     castParameter(apvts, delayTimeParamId, delayTimeParam);
     castParameter(apvts, mixParamId, mixParam);
     castParameter(apvts, feedbackParamId, feedbackParam);
+    castParameter(apvts, stereoParamId, stereoParam);
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterLayout()
@@ -90,6 +92,14 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
         juce::AudioParameterFloatAttributes().withStringFromValueFunction(stringFromPercent)
     ));
 
+    layout.add(std::make_unique<juce::AudioParameterFloat>(
+        stereoParamId,
+        "Stereo",
+        juce::NormalisableRange<float>(-100.0f, 100.0f, 1.0f),
+        0.0f,
+        juce::AudioParameterFloatAttributes().withStringFromValueFunction(stringFromPercent)
+    ));
+
     return layout;
 }
 
@@ -105,6 +115,8 @@ void Parameters::update() noexcept
     }
 
     mixSmoother.setCurrentAndTargetValue(mixParam->get() * 0.01f);
+    feedbackSmoother.setCurrentAndTargetValue(feedbackParam->get() * 0.01f);
+    stereoSmoother.setTargetValue(stereoParam->get() * 0.01f);
 }
 
 void Parameters::prepareToPlay(double sampleRate) noexcept
@@ -117,6 +129,8 @@ void Parameters::prepareToPlay(double sampleRate) noexcept
     mixSmoother.reset(sampleRate, duration);
 
     feedbackSmoother.reset(sampleRate, duration);
+
+    stereoSmoother.reset(sampleRate, duration);
 }
 
 void Parameters::reset() noexcept
@@ -131,6 +145,11 @@ void Parameters::reset() noexcept
 
     feedback = 0.0f;
     feedbackSmoother.setCurrentAndTargetValue(feedbackParam->get() * 0.01f);
+
+    stereoSmoother.setCurrentAndTargetValue(stereoParam->get() * 0.01f);
+
+    float panL = 0.0f;
+    float panR = 1.0f;
 }
 
 void Parameters::smoothen() noexcept
@@ -142,4 +161,6 @@ void Parameters::smoothen() noexcept
     mix = mixSmoother.getNextValue();
 
     feedback = feedbackSmoother.getNextValue();
+
+    panningEqualPower()
 }
