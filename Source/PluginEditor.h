@@ -21,6 +21,7 @@ private:
     RotaryKnob gainKnob{ "Gain", audioProcessor.apvts, gainParamId, true };
     RotaryKnob mixKnob{ "Mix", audioProcessor.apvts, mixParamId };
     RotaryKnob delayTimeKnob{ "Time", audioProcessor.apvts, delayTimeParamId };
+    RotaryKnob feedbackKnob{ "Feedback", audioProcessor.apvts, feedbackParamId, true };
 
     juce::GroupComponent delayGroup;
     juce::GroupComponent feedbackGroup;
