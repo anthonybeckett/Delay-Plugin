@@ -40,9 +40,9 @@ public:
 
     juce::AudioProcessorValueTreeState apvts{ *this, nullptr, "Parameters", Parameters::createParameterLayout() };
 
-private:
     Parameters params;
 
+private:
     juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Linear> delayLine;
 
     float feedbackL = 0.0f;
