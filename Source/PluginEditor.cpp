@@ -8,7 +8,7 @@ DelayAudioProcessorEditor::DelayAudioProcessorEditor (DelayAudioProcessor& p)
     tempoSyncButton.setButtonText("Sync");
     tempoSyncButton.setClickingTogglesState(true);
     tempoSyncButton.setBounds(0, 0, 70, 27);
-    tempoSyncButton.setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::red);
+    tempoSyncButton.setLookAndFeel(ButtonLookAndFeel::get());
 
     delayGroup.setText("Delay");
     delayGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
