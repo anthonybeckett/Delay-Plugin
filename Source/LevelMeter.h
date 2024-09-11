@@ -14,6 +14,8 @@ public:
 private:
 	void timerCallback() override;
 	void drawLevel(juce::Graphics& g, float level, int x, int width);
+	void updateLevel(float newLevel, float& smoothedLevel, float& levelDb) const;
+
 
 	std::atomic<float>& measurementL;
 	std::atomic<float>& measurementR;
@@ -30,6 +32,12 @@ private:
 
 	float dbLevelL = clampDb;
 	float dbLevelR = clampDb;
+
+	static constexpr int refreshRate = 60;
+
+	float decay = 0.0f;
+	float levelL = clampLevel;
+	float levelR = clampLevel;
 
 	int positionForLevel(float dbLevel) const noexcept
 	{

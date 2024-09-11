@@ -5,14 +5,16 @@ LevelMeter::LevelMeter(std::atomic<float>& measurementL_, std::atomic<float>& me
 	: measurementL(measurementL_), measurementR(measurementR_)
 {
 	setOpaque(true);
-	startTimerHz(60);
+	startTimerHz(refreshRate);
+
+	decay = 1.0f - std::exp(-1.0f / (float(refreshRate) * 0.2f));
 }
 
 LevelMeter::~LevelMeter()
 {
 }
 
-void LevelMeter::paint(juce::Graphics&)
+void LevelMeter::paint(juce::Graphics& g)
 {
 	const auto bounds = getLocalBounds();
 
@@ -42,8 +44,8 @@ void LevelMeter::resized()
 
 void LevelMeter::timerCallback()
 {
-	dbLevelL = juce::Decibels::gainToDecibels(measurementL.load(), clampDb);
-	dbLevelR = juce::Decibels::gainToDecibels(measurementR.load(), clampDb);
+	updateLevel(measurementL.load(), levelL, dbLevelL);
+	updateLevel(measurementR.load(), levelR, dbLevelR);
 
 	repaint();
 }
@@ -62,5 +64,22 @@ void LevelMeter::drawLevel(juce::Graphics& g, float level, int x, int width)
 	else if (y < getHeight()) {
 		g.setColour(Colors::LevelMeter::levelOk);
 		g.fillRect(x, y, width, getHeight() - y);
+	}
+}
+
+void LevelMeter::updateLevel(float newLevel, float& smoothedLevel, float& levelDb) const
+{
+	if (newLevel > smoothedLevel) {
+		smoothedLevel = newLevel;
+	}
+	else {
+		smoothedLevel += (newLevel - smoothedLevel) * decay;
+	}
+
+	if (smoothedLevel > clampLevel) {
+		levelDb = juce::Decibels::gainToDecibels(smoothedLevel);
+	}
+	else {
+		levelDb = clampDb;
 	}
 }
