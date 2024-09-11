@@ -1,11 +1,12 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "Measurement.h"
 
 class LevelMeter : public juce::Component, private juce::Timer
 {
 public:
-	LevelMeter(std::atomic<float>& measurementL_, std::atomic<float>& measurementR_);
+	LevelMeter(Measurement& measurementL_, Measurement& measurementR_);
 	~LevelMeter();
 
 	void paint(juce::Graphics&) override;
@@ -17,8 +18,8 @@ private:
 	void updateLevel(float newLevel, float& smoothedLevel, float& levelDb) const;
 
 
-	std::atomic<float>& measurementL;
-	std::atomic<float>& measurementR;
+	Measurement& measurementL;
+	Measurement& measurementR;
 
 	static constexpr float maxDb = 6.0f;
 	static constexpr float minDb = -60.0f;
