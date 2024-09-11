@@ -13,6 +13,7 @@ public:
 
 private:
 	void timerCallback() override;
+	void drawLevel(juce::Graphics& g, float level, int x, int width);
 
 	std::atomic<float>& measurementL;
 	std::atomic<float>& measurementR;
@@ -23,6 +24,12 @@ private:
 
 	float maxPos = 0.0f;
 	float minPos = 0.0f;
+
+	static constexpr float clampDb = -120.0f;
+	static constexpr float clampLevel = 0.000001f;
+
+	float dbLevelL = clampDb;
+	float dbLevelR = clampDb;
 
 	int positionForLevel(float dbLevel) const noexcept
 	{
