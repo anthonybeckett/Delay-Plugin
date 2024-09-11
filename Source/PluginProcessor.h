@@ -43,6 +43,9 @@ public:
 
     Parameters params;
 
+    std::atomic<float> levelL;
+    std::atomic<float> levelR;
+
 private:
     //juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Linear> delayLine;
 
