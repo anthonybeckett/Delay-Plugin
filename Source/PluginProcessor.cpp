@@ -123,6 +123,17 @@ void DelayAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 
     levelL.reset();
     levelR.reset();
+
+    delayInSamples = 0.0f;
+    targetDelay = 0.0f;
+
+    fade = 1.0f;
+    fadeTarget = 1.0f;
+
+    coeff = 1.0f - std::exp(-1.0f / (0.05f * float(sampleRate)));
+
+    wait = 0.0f;
+    waitInc = 1.0f / (0.03f * float(sampleRate));
 }
 
 void DelayAudioProcessor::releaseResources()
@@ -186,7 +197,19 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[mayb
         delayLine.setDelay(delayInSamples);*/
 
         float delayTime = params.tempoSync ? syncedTime : params.delayTime;
-        float delayInSamples = delayTime / 1000.0f * getSampleRate();
+        float newTargetDelay = delayTime / 1000.0f * getSampleRate();
+
+        if (newTargetDelay != targetDelay) {
+            targetDelay = newTargetDelay;
+
+            if (delayInSamples == 0.0f) {
+                delayInSamples = targetDelay;
+            }
+            else {
+                wait = waitInc;
+                fadeTarget = 0.0f;
+            }
+        }
         
         //delayLine.setDelay(delayInSamples);
 
@@ -217,6 +240,21 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[mayb
         float wetL = delayLineL.read(delayInSamples);
         float wetR = delayLineR.read(delayInSamples);
 
+        fade += (fadeTarget - fade) * coeff;
+
+        wetL *= fade;
+        wetR *= fade;
+
+        if (wait > 0.0f) {
+            wait += waitInc;
+
+            if (wait >= 1.0f) {
+                delayInSamples = targetDelay;
+                wait = 0.0f;
+                fadeTarget = 1.0f;
+            }
+        }
+
         feedbackL = wetL * params.feedback;
         feedbackL = lowCutFilter.processSample(0, feedbackL);
         feedbackL = highCutFilter.processSample(0, feedbackL);
@@ -230,6 +268,11 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[mayb
 
         float outL = mixL * params.gain;
         float outR = mixR * params.gain;
+
+        if (params.bypassed) {
+            outL = dryL;
+            outR = dryR;
+        }
 
         outputDataL[sample] = outL;
         outputDataR[sample] = outR;
@@ -267,6 +310,11 @@ void DelayAudioProcessor::setStateInformation (const void* data, int sizeInBytes
     if (xml.get() != nullptr && xml->hasTagName(apvts.state.getType())) {
         apvts.replaceState(juce::ValueTree::fromXml(*xml));
     }
+}
+
+juce::AudioProcessorParameter* DelayAudioProcessor::getBypassParameter() const
+{
+    return params.bypassParam;
 }
 
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()

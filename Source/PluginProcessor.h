@@ -40,6 +40,8 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    juce::AudioProcessorParameter* getBypassParameter() const override;
+
     juce::AudioProcessorValueTreeState apvts{ *this, nullptr, "Parameters", Parameters::createParameterLayout() };
 
     Parameters params;
@@ -63,6 +65,14 @@ private:
     juce::dsp::StateVariableTPTFilter<float> highCutFilter;
 
     Tempo tempo;
+
+    float delayInSamples = 0.0f;
+    float targetDelay = 0.0f;
+    float fade = 0.0f;
+    float fadeTarget = 0.0f;
+    float coeff = 0.0f;
+    float wait = 0.0f;
+    float waitInc = 0.0f;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DelayAudioProcessor)
 };
